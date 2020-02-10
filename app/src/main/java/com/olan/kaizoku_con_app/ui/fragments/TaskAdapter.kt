@@ -5,15 +5,15 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.olan.kaizoku_con_app.R
-import com.olan.kaizoku_con_app.models.BikeJourney
-import com.olan.kaizoku_con_app.models.CarJourney
-import com.olan.kaizoku_con_app.models.Task
+import com.olan.kaizoku_con_app.models.*
 import kotlinx.android.synthetic.main.row_task.view.*
 
 class TaskAdapter(private val tasks: List<Task>) : RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
 
     val carDrawable = R.drawable.ic_car_journey
     val bikeDrawable = R.drawable.ic_bike_journey
+    val busDrawable = R.drawable.ic_bus_journey
+    val walkDrawable = R.drawable.ic_walk_journey
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
@@ -37,6 +37,13 @@ class TaskAdapter(private val tasks: List<Task>) : RecyclerView.Adapter<TaskAdap
             is BikeJourney -> {
                 holder.view.task_title.text = "Bike Journey"
                 holder.view.task_icon.setImageDrawable(holder.view.context.getDrawable(bikeDrawable))
+            }
+            is TransitJourney -> {
+                holder.view.task_title.text = task.transitMode
+                holder.view.task_icon.setImageDrawable(holder.view.context.getDrawable(busDrawable))
+            }
+            is WalkingJourney -> {
+                holder.view.task_icon.setImageDrawable(holder.view.context.getDrawable(walkDrawable))
             }
 
         }
