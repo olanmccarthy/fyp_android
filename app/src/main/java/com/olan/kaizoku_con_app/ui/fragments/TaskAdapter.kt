@@ -5,9 +5,16 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.olan.kaizoku_con_app.R
+import com.olan.kaizoku_con_app.models.BikeJourney
+import com.olan.kaizoku_con_app.models.CarJourney
 import com.olan.kaizoku_con_app.models.Task
+import kotlinx.android.synthetic.main.row_task.view.*
 
-class TaskAdapter(val tasks: List<Task>) : RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
+class TaskAdapter(private val tasks: List<Task>) : RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
+
+    val carDrawable = R.drawable.ic_car_journey
+    val bikeDrawable = R.drawable.ic_bike_journey
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         //perhaps this could be surrounded in an if statement so that different rows get inflated
@@ -17,10 +24,23 @@ class TaskAdapter(val tasks: List<Task>) : RecyclerView.Adapter<TaskAdapter.View
         return ViewHolder(layoutView)
     }
 
-    override fun getItemCount() = 5
+    override fun getItemCount() = tasks.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        //TODO("not implemented") after view has been implemented this will say what values one must get from the task class to put in
+        val task = tasks[position]
+        //switch statement to alter depending on what type of task is in list
+        when (task){
+            is CarJourney -> {
+                holder.view.task_title.text = task.carModel
+                holder.view.task_icon.setImageDrawable(holder.view.context.getDrawable(carDrawable))
+            }
+            is BikeJourney -> {
+                holder.view.task_title.text = "Bike Journey"
+                holder.view.task_icon.setImageDrawable(holder.view.context.getDrawable(bikeDrawable))
+            }
+
+        }
+        holder.view.task_cost.text = task.carbonCost.toString()
     }
 
     class ViewHolder(val view: View) : RecyclerView.ViewHolder(view) {

@@ -11,6 +11,7 @@ import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.olan.kaizoku_con_app.R
+import com.olan.kaizoku_con_app.models.BikeJourney
 import com.olan.kaizoku_con_app.models.CarJourney
 import com.olan.kaizoku_con_app.models.Task
 import kotlinx.android.synthetic.main.fragment_main.*
@@ -37,7 +38,11 @@ class MainFragment : Fragment(), View.OnClickListener {
             "ford",
             "smax",
             2
-        )
+        ),
+        BikeJourney(3,
+            arrayOf(7.77, 7.77),
+            arrayOf(8.88, 8.88),
+            false)
     )
 
     override fun onCreateView(
