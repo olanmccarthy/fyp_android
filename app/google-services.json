@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "341503257231",
+    "firebase_url": "https://final-year-project-35cae.firebaseio.com",
+    "project_id": "final-year-project-35cae",
+    "storage_bucket": "final-year-project-35cae.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:341503257231:android:e80acfa6a94708f3a91efa",
+        "android_client_info": {
+          "package_name": "com.olan.finalyearproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "341503257231-8q5slr9heg9ank6mff37sam4cco59r4a.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA8HatoQILAo_U2vSGIgklyU-Qp4Jli944"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "341503257231-8q5slr9heg9ank6mff37sam4cco59r4a.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
