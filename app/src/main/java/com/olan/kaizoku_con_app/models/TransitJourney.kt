@@ -1,4 +1,4 @@
-package com.olan.kaizoku_con_app.models
+package com.olan.finalyearproject.models
 
 import java.util.*
 

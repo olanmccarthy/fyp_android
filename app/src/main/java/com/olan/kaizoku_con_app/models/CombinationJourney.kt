@@ -1,4 +1,4 @@
-package com.olan.kaizoku_con_app.models
+package com.olan.finalyearproject.models
 
 class CombinationJourney(override val uid: Int): Task {
     //TODO lots of refactoring and thought to be put into this later

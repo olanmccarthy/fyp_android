@@ -1,11 +1,11 @@
-package com.olan.kaizoku_con_app.ui.fragments
+package com.olan.finalyearproject.ui.fragments
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
-import com.olan.kaizoku_con_app.R
-import com.olan.kaizoku_con_app.models.*
+import com.olan.finalyearproject.R
+import com.olan.finalyearproject.models.*
 import kotlinx.android.synthetic.main.row_task.view.*
 
 class TaskAdapter(private val tasks: List<Task>) : RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
