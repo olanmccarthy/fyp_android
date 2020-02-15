@@ -27,7 +27,8 @@ class LoginActivity: AppCompatActivity() {
         val registerButton = findViewById<Button>(R.id.registerButton)
 
         loginButton.setOnClickListener{ view ->
-            signIn(view)
+            debug_signIn(view) //TODO remove for production
+            //signIn(view)
         }
 
         registerButton.setOnClickListener{
@@ -51,6 +52,19 @@ class LoginActivity: AppCompatActivity() {
         d("olanDebug", "email is $email and password is $password")
 
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, OnCompleteListener<AuthResult> { task ->
+            if (task.isSuccessful){
+                val intent = Intent(this, MainActivity::class.java)
+                //intent.putExtra("id", mAuth.currentUser?.email)
+                startActivity(intent)
+                finish() //this prevents user from going back
+            } else {
+                showMessage(view, "Error: ${task.exception?.message}")
+            }
+        })
+    }
+    //sign in function to when I'm debugging
+    fun debug_signIn(view: View){
+        mAuth.signInWithEmailAndPassword("olan@test.com", "test123").addOnCompleteListener(this, OnCompleteListener<AuthResult> { task ->
             if (task.isSuccessful){
                 val intent = Intent(this, MainActivity::class.java)
                 //intent.putExtra("id", mAuth.currentUser?.email)
