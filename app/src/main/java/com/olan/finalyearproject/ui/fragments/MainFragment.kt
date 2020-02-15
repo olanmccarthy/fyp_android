@@ -1,4 +1,4 @@
-package com.olan.kaizoku_con_app.ui.fragments
+package com.olan.finalyearproject.ui.fragments
 
 
 import android.os.Bundle
@@ -10,10 +10,10 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.olan.kaizoku_con_app.R
-import com.olan.kaizoku_con_app.models.BikeJourney
-import com.olan.kaizoku_con_app.models.CarJourney
-import com.olan.kaizoku_con_app.models.Task
+import com.olan.finalyearproject.R
+import com.olan.finalyearproject.models.BikeJourney
+import com.olan.finalyearproject.models.CarJourney
+import com.olan.finalyearproject.models.Task
 import kotlinx.android.synthetic.main.fragment_main.*
 
 /**

@@ -1,4 +1,4 @@
-package com.olan.kaizoku_con_app.models
+package com.olan.finalyearproject.models
 
 //Class that encapsulates all Journey tasks
 interface JourneyTask: Task {

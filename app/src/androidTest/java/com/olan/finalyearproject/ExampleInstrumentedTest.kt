@@ -1,4 +1,4 @@
-package com.olan.kaizoku_con_app
+package com.olan.finalyearproject
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

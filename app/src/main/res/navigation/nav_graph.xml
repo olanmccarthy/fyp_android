@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.olan.kaizoku_con_app.ui.fragments.MainFragment"
+        android:name="com.olan.finalyearproject.ui.fragments.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/addActivityFragment"
-        android:name="com.olan.kaizoku_con_app.ui.fragments.AddActivityFragment"
+        android:name="com.olan.finalyearproject.ui.fragments.AddActivityFragment"
         android:label="fragment_add_activity"
         tools:layout="@layout/fragment_add_activity" />
 </navigation>

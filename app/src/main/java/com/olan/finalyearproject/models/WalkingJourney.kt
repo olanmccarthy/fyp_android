@@ -1,4 +1,4 @@
-package com.olan.kaizoku_con_app.models
+package com.olan.finalyearproject.models
 
 class WalkingJourney(
     override val uid: Int, override val origin: Array<Double>,
