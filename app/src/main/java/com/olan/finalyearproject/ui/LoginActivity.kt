@@ -13,6 +13,8 @@ import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
 import com.olan.finalyearproject.R
 
+
+//TODO have way to check if user is already signed in / previously signed in
 class LoginActivity: AppCompatActivity() {
     //initialise FirebaseAuth instance
     var mAuth = FirebaseAuth.getInstance()
@@ -23,9 +25,6 @@ class LoginActivity: AppCompatActivity() {
         //get references to both buttons
         val loginButton = findViewById<Button>(R.id.loginButton)
         val registerButton = findViewById<Button>(R.id.registerButton)
-        //get references for both text fields
-        var emailField = findViewById<TextView>(R.id.emailTextField)
-        var passField = findViewById<TextView>(R.id.passwordTextField1)
 
         loginButton.setOnClickListener{ view ->
             signIn(view)
@@ -56,7 +55,8 @@ class LoginActivity: AppCompatActivity() {
                 val intent = Intent(this, MainActivity::class.java)
                 //intent.putExtra("id", mAuth.currentUser?.email)
                 startActivity(intent)
-            }else {
+                finish() //this prevents user from going back
+            } else {
                 showMessage(view, "Error: ${task.exception?.message}")
             }
         })
