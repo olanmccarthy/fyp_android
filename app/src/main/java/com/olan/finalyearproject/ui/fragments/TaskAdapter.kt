@@ -8,7 +8,7 @@ import com.olan.finalyearproject.R
 import com.olan.finalyearproject.models.*
 import kotlinx.android.synthetic.main.row_task.view.*
 
-class TaskAdapter(private val tasks: List<Task>) : RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
+class TaskAdapter(private val taskClasses: List<TaskClass>) : RecyclerView.Adapter<TaskAdapter.ViewHolder>() {
 
     val carDrawable = R.drawable.ic_car_journey
     val bikeDrawable = R.drawable.ic_bike_journey
@@ -24,10 +24,10 @@ class TaskAdapter(private val tasks: List<Task>) : RecyclerView.Adapter<TaskAdap
         return ViewHolder(layoutView)
     }
 
-    override fun getItemCount() = tasks.size
+    override fun getItemCount() = taskClasses.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val task = tasks[position]
+        val task = taskClasses[position]
         //switch statement to alter depending on what type of task is in list
         when (task){
             is CarJourney -> {

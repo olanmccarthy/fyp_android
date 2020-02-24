@@ -1,8 +1,8 @@
 package com.olan.finalyearproject.models
 
 class WalkingJourney(
-    override val uid: Int, override val origin: Array<Double>,
-    override val destination: Array<Double>
+    override val uid: String, override val origin: Any?,
+    override val destination: Any?
 ) : JourneyTask {
     override val carbonCost: Double = 0.0
     override val taskType = "journey"

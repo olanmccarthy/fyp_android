@@ -1,7 +1,7 @@
 package com.olan.finalyearproject.models
 
 class CarJourney(
-    override val uid: Int, override val origin: Array<Double>, override val destination: Array<Double>,
+    override val uid: String, override val origin: Any?, override val destination: Any?,
     val carMake: String, val carModel: String, val passengers: Int = 0
 ): JourneyTask {
 

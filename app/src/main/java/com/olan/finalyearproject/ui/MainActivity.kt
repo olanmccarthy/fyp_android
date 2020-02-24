@@ -14,19 +14,41 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.olan.finalyearproject.R
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
+    //firebase & firestore instances
     var mAuth = FirebaseAuth.getInstance()
+    val db = FirebaseFirestore.getInstance()
 
+    //variables for nav drawer
     lateinit var toolbar: Toolbar
     lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
     lateinit var headerView: View
+    //id of user currently logged in
+    var userId: String? = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        //listen checks and returns to login screen and kills process if user isn't found
+        mAuth.addAuthStateListener {
+            if (mAuth.currentUser == null){
+                d("olanDebug", "null user found") //TODO remove after testing
+                val intent = Intent(this, LoginActivity::class.java)
+                startActivity(intent)
+                this.finish()
+            }
+        }
+
+        //set userId to be id of current user
+        if (mAuth.currentUser != null){
+            userId = mAuth.currentUser?.uid
+        }
+
         setContentView(R.layout.activity_main)
 
         //nav drawer stuff
@@ -44,25 +66,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         navView.setNavigationItemSelectedListener(this)
-
-        //listen checks and returns to login screen and kills process if user isn't found
-        mAuth.addAuthStateListener {
-            if (mAuth.currentUser == null){
-                d("olanDebug", "null user found") //TODO remove after testing
-                val intent = Intent(this, LoginActivity::class.java)
-                startActivity(intent)
-                this.finish()
-            }
-        }
-
     }
-/*
-    override fun onStart() {
-        super.onStart()
-        findViewById<TextView>(R.id.usernameField).text = "${mAuth.currentUser?.email}"
 
-    }
-*/
+    //function controlling actions taken when items in nav drawer are selected
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.nav_profile -> {
