@@ -10,14 +10,103 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+        <EditText
+            android:id="@+id/destinationText"
+            android:layout_width="77dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="24dp"
+            android:ems="10"
+            android:hint="destination"
+            android:inputType="number"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.192"
+            app:layout_constraintStart_toEndOf="@+id/originText"
+            app:layout_constraintTop_toBottomOf="@+id/journeyTypeSpinner" />
+
+        <Spinner
+            android:id="@+id/journeyTypeSpinner"
+            android:layout_width="271dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="24dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/journeyTypeTextView" />
+
+        <Spinner
+            android:id="@+id/taskTypeSpinner"
+            android:layout_width="271dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/taskTypeTextView" />
+
         <TextView
-            android:id="@+id/textView"
+            android:id="@+id/taskTypeTextView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="THIS IS THE ADD ACTIVITY FRAGMENT"
-            app:layout_constraintBottom_toBottomOf="parent"
+            android:layout_marginTop="96dp"
+            android:text="TaskType"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/journeyTypeTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="JourneyType"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/taskTypeSpinner" />
+
+        <EditText
+            android:id="@+id/originText"
+            android:layout_width="77dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="96dp"
+            android:layout_marginTop="24dp"
+            android:ems="10"
+            android:hint="origin"
+            android:inputType="number"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/journeyTypeSpinner" />
+
+        <Switch
+            android:id="@+id/isElectricSwitch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/originText"
+            tools:text="Is Electric?" />
+
+        <Spinner
+            android:id="@+id/carMakeSpinner"
+            android:layout_width="271dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="24dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/originText" />
+
+        <Spinner
+            android:id="@+id/carModelSpinner"
+            android:layout_width="271dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="36dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/carMakeSpinner" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>
