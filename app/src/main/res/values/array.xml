@@ -6,6 +6,7 @@
         <item>JourneyTask</item>
     </string-array>
     <string-array name="JourneyTypes">
+        <item>None</item>
         <item>Bike Journey</item>
         <item>Car Journey</item>
         <item>Transit Journey</item>
