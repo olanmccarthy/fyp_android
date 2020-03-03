@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="TaskTypes">
+        <item>Test Task</item>
+        <item>Another Task</item>
+        <item>JourneyTask</item>
+    </string-array>
+    <string-array name="JourneyTypes">
+        <item>None</item>
+        <item>Bike Journey</item>
+        <item>Car Journey</item>
+        <item>Transit Journey</item>
+        <item>Walking Journey</item>
+    </string-array>
+</resources>

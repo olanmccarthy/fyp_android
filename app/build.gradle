@@ -4,11 +4,13 @@ apply plugin: 'kotlin-android'
 
 apply plugin: 'kotlin-android-extensions'
 
+apply plugin: 'com.google.gms.google-services'  // Google Services plugin
+
 android {
     compileSdkVersion 29
     buildToolsVersion "29.0.2"
     defaultConfig {
-        applicationId "com.olan.final_year_project"
+        applicationId "com.olan.finalyearproject"
         minSdkVersion 21
         targetSdkVersion 29
         versionCode 1
@@ -36,4 +38,8 @@ dependencies {
     implementation 'com.google.android.material:material:1.0.0'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.2.1'
     implementation 'androidx.navigation:navigation-ui-ktx:2.2.1'
+    implementation 'com.google.firebase:firebase-auth:19.2.0'
+    implementation 'com.google.firebase:firebase-firestore-ktx:21.4.0'
+    implementation("com.squareup.okhttp3:okhttp:4.4.0")
+    implementation 'com.google.code.gson:gson:2.8.6'
 }

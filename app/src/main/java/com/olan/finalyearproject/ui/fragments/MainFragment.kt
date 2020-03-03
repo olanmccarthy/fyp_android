@@ -2,6 +2,7 @@ package com.olan.finalyearproject.ui.fragments
 
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -10,10 +11,13 @@ import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.olan.finalyearproject.R
 import com.olan.finalyearproject.models.BikeJourney
 import com.olan.finalyearproject.models.CarJourney
-import com.olan.finalyearproject.models.Task
+import com.olan.finalyearproject.models.TaskClass
+import com.olan.finalyearproject.models.WalkingJourney
 import kotlinx.android.synthetic.main.fragment_main.*
 
 /**
@@ -23,27 +27,9 @@ class MainFragment : Fragment(), View.OnClickListener {
 
     var navController: NavController? = null
 
-    var tasks = listOf<Task>(
-        CarJourney(
-            1,
-            arrayOf(1.1, 1.1),
-            arrayOf(2.2, 2.2),
-            "honda",
-            "civic"
-        ),
-        CarJourney(
-            2,
-            arrayOf(4.44, 4.44),
-            arrayOf(6.66, 6.66),
-            "ford",
-            "smax",
-            2
-        ),
-        BikeJourney(3,
-            arrayOf(7.77, 7.77),
-            arrayOf(8.88, 8.88),
-            false)
-    )
+    //firebase & firestore instances
+    var mAuth = FirebaseAuth.getInstance()
+    val db = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -57,12 +43,64 @@ class MainFragment : Fragment(), View.OnClickListener {
         super.onViewCreated(view, savedInstanceState)
         navController = Navigation.findNavController(view)
 
-        recylerView.apply {
-            //TODO find some sort of context that will work for the layout manager
-            layoutManager = LinearLayoutManager(activity)
-            //TODO implement adapter that will display the views for the tasks on the recyclerView
-            adapter = TaskAdapter(tasks)
-        }
+        var currentPlanArray = ArrayList<TaskClass>()
+
+        //get collection from firestore and then load the view afterwards
+        //TODO encapsulate this in another function
+        db.collection("users").document(mAuth.currentUser?.uid!!).collection("currentPlan").get()
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    //loop through all tasks in currentPlan collection
+                    for (document in task.result!!) {
+                        //case for different types of task types
+                        when(document.get("taskType").toString()){
+                            "JourneyTask" ->{
+                                //case for different journey types
+                                when(document.get("journeyType").toString()){
+                                    "bicycling" ->{
+                                        val task = BikeJourney(
+                                            uid = mAuth.currentUser?.uid!!,
+                                            destination = document.get("destination"),
+                                            origin = document.get("origin"),
+                                            isElectric = document.get("isElectric")
+                                        )
+                                        currentPlanArray.add(task)
+                                    }
+                                    "driving" ->{
+                                        val task = CarJourney(
+                                            uid = mAuth.currentUser?.uid!!,
+                                            origin = document.get("origin"),
+                                            destination = document.get("destination"),
+                                            carMake = document.get("carMake").toString(),
+                                            carModel = document.get("carModel").toString()
+                                        )
+                                        currentPlanArray.add(task)
+                                    }
+                                    "combination" ->{}
+                                    "transit" ->{}
+                                    "walking" ->{
+                                        val task = WalkingJourney(
+                                            uid = mAuth.currentUser?.uid!!,
+                                            destination = document.get("destination"),
+                                            origin = document.get("origin")
+                                        )
+                                        currentPlanArray.add(task)
+                                    }
+                                }
+                            }
+                            //TODO add handlers for different types of tasks when created
+                        }
+                    }
+                } else {
+                    Log.d("olanDebug", "could not get currentPlan from firestore")
+                }
+                //apply the recycler view once database has been retrieved
+                recylerView.apply {
+                    layoutManager = LinearLayoutManager(activity)
+                    adapter = TaskAdapter(currentPlanArray)
+                }
+            }
+
         view.findViewById<FloatingActionButton>(R.id.addActivityButton).setOnClickListener(this)
     }
 
