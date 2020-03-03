@@ -11,6 +11,8 @@ import android.widget.*
 import com.google.gson.GsonBuilder
 import com.olan.finalyearproject.R
 import com.olan.finalyearproject.helpers.CarMakeSpinnerListener
+import com.olan.finalyearproject.helpers.JourneyTypeSpinnerListener
+import com.olan.finalyearproject.helpers.TaskTypeSpinnerListener
 import com.squareup.okhttp.Callback
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
@@ -18,11 +20,9 @@ import com.squareup.okhttp.Response
 import org.w3c.dom.Text
 import java.io.IOException
 
-/**
- * A simple [Fragment] subclass.
- */
-class AddActivityFragment : Fragment(), AdapterView.OnItemSelectedListener {
+class AddActivityFragment : Fragment() {
 
+    //initialise lateinit vars for all view items
     lateinit var taskTypeSpinner: Spinner
     lateinit var journeyTypeTextView: TextView
     lateinit var journeyTypeSpinner: Spinner
@@ -32,9 +32,16 @@ class AddActivityFragment : Fragment(), AdapterView.OnItemSelectedListener {
     lateinit var carMakeSpinner: Spinner
     lateinit var carModelSpinner: Spinner
 
+    //initialise lateinit arrays for collections of views
+    lateinit var journeyTaskViews: Array<View>
+    lateinit var carJourneyViews: Array<View>
+    lateinit var bikeJourneyViews: Array<View>
+
+    //initialise lateinit adapters for spinners
     lateinit var carMakeAdapter: ArrayAdapter<String>
     lateinit var carModelAdapter: ArrayAdapter<String>
 
+    //arrays to contain car models and makes
     var carMakes = arrayListOf("None")
     var carModels = arrayListOf("None")
 
@@ -59,6 +66,11 @@ class AddActivityFragment : Fragment(), AdapterView.OnItemSelectedListener {
         isElectricSwitch = view.findViewById(R.id.isElectricSwitch)
         carMakeSpinner = view.findViewById(R.id.carMakeSpinner)
         carModelSpinner = view.findViewById(R.id.carModelSpinner)
+
+        //create arrays of items associated with view selections
+        journeyTaskViews = arrayOf(journeyTypeTextView, journeyTypeSpinner, originTextView, destinationTextView)
+        carJourneyViews = arrayOf(carMakeSpinner, carModelSpinner)
+        bikeJourneyViews = arrayOf(isElectricSwitch)
 
         //create adapter for viewing the task type spinner
         val taskTypeAdapter = ArrayAdapter.createFromResource(
@@ -87,52 +99,9 @@ class AddActivityFragment : Fragment(), AdapterView.OnItemSelectedListener {
         carModelSpinner.adapter = carModelAdapter
 
         //set the listener for both spinners to be this class
-        taskTypeSpinner.onItemSelectedListener = this
-        journeyTypeSpinner.onItemSelectedListener = this
+        taskTypeSpinner.onItemSelectedListener = TaskTypeSpinnerListener(journeyTaskViews)
+        journeyTypeSpinner.onItemSelectedListener = JourneyTypeSpinnerListener(carJourneyViews, bikeJourneyViews)
         carMakeSpinner.onItemSelectedListener = CarMakeSpinnerListener(carModels, carModelAdapter, activity!!)
-    }
-
-    override fun onItemSelected(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-        //switch statement controller for task type and journey type spinners
-        //TODO add separate event handlers for all the spinners
-
-        //create arrays pointing to each collection of views associated with journey type to simplify
-        //altering visibility
-        val carViews = arrayOf(carMakeSpinner, carModelSpinner)
-        val bikeViews = arrayOf(isElectricSwitch)
-
-        when(parent?.getItemAtPosition(position)){
-            "JourneyTask" -> {
-                d("olanDebug", "journey task selected")
-                journeyTypeTextView.visibility = View.VISIBLE
-                journeyTypeSpinner.visibility = View.VISIBLE
-                originTextView.visibility = View.VISIBLE
-                destinationTextView.visibility = View.VISIBLE
-            } //TODO add cases for other task types
-            "Bike Journey" ->{
-                d("olanDebug", "bike journey selected")
-                carViews.forEach { item -> item.visibility = View.INVISIBLE }
-                bikeViews.forEach { item -> item.visibility = View.VISIBLE }
-            }
-            "Car Journey" ->{
-                d("olanDebug", "car journey selected")
-                carViews.forEach { item -> item.visibility = View.VISIBLE }
-                //call getjson(), update array for car make adapter, call carMakeAdapter.notifyDataSetChanged
-
-            }
-            "Transit Journey" ->{
-                d("olanDebug", "transit journey selected")
-
-            }
-            "Walking Journey" ->{
-                d("olanDebug", "walking journey selected")
-
-            }
-        }
-    }
-
-    override fun onNothingSelected(parent: AdapterView<*>?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     fun fetchJson(){
