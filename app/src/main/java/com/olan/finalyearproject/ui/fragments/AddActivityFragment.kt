@@ -50,7 +50,6 @@ class AddActivityFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        fetchJson()
         return inflater.inflate(R.layout.fragment_add_activity, container, false)
     }
 
@@ -103,39 +102,6 @@ class AddActivityFragment : Fragment() {
         journeyTypeSpinner.onItemSelectedListener = JourneyTypeSpinnerListener(
             carJourneyViews, bikeJourneyViews, carMakes, carMakeAdapter, activity!!)
         carMakeSpinner.onItemSelectedListener = CarMakeSpinnerListener(carModels, carModelAdapter, activity!!)
-    }
-
-    fun fetchJson(){
-        d("olanDebug","running fetch json")
-        val url = "http://leela.netsoc.co:5001/car_makes"
-
-        val request = Request.Builder().url(url).build()
-
-        val client = OkHttpClient()
-
-        client.newCall(request).enqueue(object: Callback{
-            override fun onResponse(response: Response?) {
-                //get json response and cast to string
-                val body = response?.body()?.string()
-                //convert json response to data class
-                val gson = GsonBuilder().create()
-                val holder = gson.fromJson(body, MakeHolder::class.java)
-                //add items from data class to array carMake adapter uses
-                holder.makes.forEach { item -> carMakes.add(item) }
-                //make carMake Adapter aware of updates to list
-                //this needs to be run on UiThread
-                d("olanDebug", "*********************** carMakes updated $carMakes ****************")
-                activity!!.runOnUiThread { carMakeAdapter.notifyDataSetChanged() }
-            }
-
-            override fun onFailure(request: Request?, e: IOException?) {
-                d("olanDebug", "failed rest api call")
-                d("olanDebug", e.toString())
-                carMakes.add("Failed to connect to rest")
-                activity!!.runOnUiThread { carMakeAdapter.notifyDataSetChanged() }
-            }
-
-        })
     }
 
 }
