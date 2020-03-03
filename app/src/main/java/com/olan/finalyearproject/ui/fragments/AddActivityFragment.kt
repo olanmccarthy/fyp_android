@@ -100,7 +100,8 @@ class AddActivityFragment : Fragment() {
 
         //set the listener for both spinners to be this class
         taskTypeSpinner.onItemSelectedListener = TaskTypeSpinnerListener(journeyTaskViews)
-        journeyTypeSpinner.onItemSelectedListener = JourneyTypeSpinnerListener(carJourneyViews, bikeJourneyViews)
+        journeyTypeSpinner.onItemSelectedListener = JourneyTypeSpinnerListener(
+            carJourneyViews, bikeJourneyViews, carMakes, carMakeAdapter, activity!!)
         carMakeSpinner.onItemSelectedListener = CarMakeSpinnerListener(carModels, carModelAdapter, activity!!)
     }
 
