@@ -13,10 +13,19 @@
         <action
             android:id="@+id/action_mainFragment_to_addActivityFragment"
             app:destination="@id/addActivityFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_previousPlansFragment"
+            app:destination="@id/previousPlansFragment" />
     </fragment>
     <fragment
         android:id="@+id/addActivityFragment"
         android:name="com.olan.finalyearproject.ui.fragments.AddActivityFragment"
         android:label="fragment_add_activity"
         tools:layout="@layout/fragment_add_activity" />
+    <fragment
+        android:id="@+id/previousPlansFragment"
+        android:name="com.olan.finalyearproject.ui.fragments.PreviousPlansFragment"
+        android:label="PreviousPlansFragment"
+        tools:layout="@layout/fragment_previous_plans"
+    />
 </navigation>

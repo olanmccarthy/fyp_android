@@ -12,6 +12,7 @@ import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.NavController
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -22,6 +23,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     //firebase & firestore instances
     var mAuth = FirebaseAuth.getInstance()
     val db = FirebaseFirestore.getInstance()
+
+    var navController: NavController? = null
+
 
     //variables for nav drawer
     lateinit var toolbar: Toolbar
@@ -75,10 +79,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Toast.makeText(this, "Profile clicked", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_current_plan -> {
-                Toast.makeText(this, "Messages clicked", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Current Plan clicked", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_previous_plans -> {
-                Toast.makeText(this, "Friends clicked", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Previous Plans clicked", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_update -> {
                 Toast.makeText(this, "Update clicked", Toast.LENGTH_SHORT).show()
