@@ -11,13 +11,17 @@ import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.AuthResult
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import com.olan.finalyearproject.R
+import com.olan.finalyearproject.UserClient
+import com.olan.finalyearproject.models.User
 
 
 //TODO have way to check if user is already signed in / previously signed in
 class LoginActivity: AppCompatActivity() {
     //initialise FirebaseAuth instance
     var mAuth = FirebaseAuth.getInstance()
+    val db = FirebaseFirestore.getInstance()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,8 +31,8 @@ class LoginActivity: AppCompatActivity() {
         val registerButton = findViewById<Button>(R.id.registerButton)
 
         loginButton.setOnClickListener{ view ->
-            debug_signIn(view) //TODO remove for production
-            //signIn(view)
+            //debug_signIn(view) //TODO remove for production
+            signIn(view)
         }
 
         registerButton.setOnClickListener{
@@ -53,10 +57,24 @@ class LoginActivity: AppCompatActivity() {
 
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, OnCompleteListener<AuthResult> { task ->
             if (task.isSuccessful){
-                val intent = Intent(this, MainActivity::class.java)
-                //intent.putExtra("id", mAuth.currentUser?.email)
-                startActivity(intent)
-                finish() //this prevents user from going back
+                //set the userClient singleton to be user
+                val userId = task.result!!.user!!.uid
+                db.collection("users").document(userId).get()
+                    .addOnCompleteListener{ task ->
+                        if (task.isSuccessful){
+
+                            var user = task.result!!.toObject(User::class.java)
+                            d("olanDebug", "retrieved user instance ${user.toString()}")
+                            ((applicationContext) as UserClient).user = user
+                            val intent = Intent(this, MainActivity::class.java)
+                            //intent.putExtra("id", mAuth.currentUser?.email)
+                            startActivity(intent)
+                            finish() //this prevents user from going back
+                        } else {
+                            showMessage(view, "Error: ${task.exception?.message}")
+                        }
+                    }
+
             } else {
                 showMessage(view, "Error: ${task.exception?.message}")
             }

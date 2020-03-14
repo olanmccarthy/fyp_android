@@ -21,11 +21,19 @@
         android:id="@+id/addActivityFragment"
         android:name="com.olan.finalyearproject.ui.fragments.AddActivityFragment"
         android:label="fragment_add_activity"
-        tools:layout="@layout/fragment_add_activity" />
+        tools:layout="@layout/fragment_add_activity" >
+        <action
+            android:id="@+id/action_addActivityFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+    </fragment>
     <fragment
         android:id="@+id/previousPlansFragment"
         android:name="com.olan.finalyearproject.ui.fragments.PreviousPlansFragment"
         android:label="PreviousPlansFragment"
         tools:layout="@layout/fragment_previous_plans"
     />
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.olan.finalyearproject.ui.fragments.MapFragment"
+        android:label="MapFragment" />
 </navigation>

@@ -10,21 +10,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <EditText
-            android:id="@+id/destinationText"
-            android:layout_width="77dp"
-            android:layout_height="38dp"
-            android:layout_marginStart="60dp"
-            android:layout_marginTop="24dp"
-            android:ems="10"
-            android:hint="destination"
-            android:inputType="number"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.192"
-            app:layout_constraintStart_toEndOf="@+id/originText"
-            app:layout_constraintTop_toBottomOf="@+id/journeyTypeSpinner" />
-
         <Spinner
             android:id="@+id/journeyTypeSpinner"
             android:layout_width="271dp"
@@ -70,45 +55,63 @@
             android:id="@+id/originText"
             android:layout_width="77dp"
             android:layout_height="38dp"
-            android:layout_marginStart="96dp"
+            android:layout_marginStart="88dp"
             android:layout_marginTop="24dp"
             android:ems="10"
             android:hint="origin"
             android:inputType="number"
             android:visibility="invisible"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/journeyTypeSpinner" />
+            app:layout_constraintTop_toBottomOf="@+id/mapsButton" />
 
         <Switch
             android:id="@+id/isElectricSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
+            android:layout_marginTop="32dp"
             android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/originText"
             tools:text="Is Electric?" />
 
         <Spinner
-            android:id="@+id/carMakeSpinner"
-            android:layout_width="271dp"
-            android:layout_height="25dp"
-            android:layout_marginTop="24dp"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/originText" />
-
-        <Spinner
             android:id="@+id/carModelSpinner"
             android:layout_width="271dp"
             android:layout_height="25dp"
-            android:layout_marginTop="36dp"
+            android:layout_marginTop="28dp"
             android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.457"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/carMakeSpinner" />
+
+        <EditText
+            android:id="@+id/destinationText"
+            android:layout_width="77dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="60dp"
+            android:layout_marginTop="24dp"
+            android:ems="10"
+            android:hint="destination"
+            android:inputType="number"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.201"
+            app:layout_constraintStart_toEndOf="@+id/originText"
+            app:layout_constraintTop_toBottomOf="@+id/mapsButton" />
+
+        <Spinner
+            android:id="@+id/carMakeSpinner"
+            android:layout_width="271dp"
+            android:layout_height="25dp"
+            android:layout_marginTop="32dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.457"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/originText" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/addActivityButton"
@@ -120,6 +123,17 @@
             android:src="@drawable/ic_add_button"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
+
+        <Button
+            android:id="@+id/mapsButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:text="Select Route"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/journeyTypeSpinner" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

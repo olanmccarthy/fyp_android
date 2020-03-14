@@ -7,11 +7,11 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.olan.finalyearproject.R
-import com.olan.finalyearproject.helpers.CarMakeSpinnerListener
-import com.olan.finalyearproject.helpers.JourneyTypeSpinnerListener
-import com.olan.finalyearproject.helpers.TaskTypeSpinnerListener
+import com.olan.finalyearproject.helpers.*
 
 class AddActivityFragment : Fragment(), View.OnClickListener{
 
@@ -25,6 +25,7 @@ class AddActivityFragment : Fragment(), View.OnClickListener{
     lateinit var carMakeSpinner: Spinner
     lateinit var carModelSpinner: Spinner
     lateinit var addActivityButton: FloatingActionButton
+    lateinit var mapsButton: Button
 
     //initialise lateinit arrays for collections of views
     lateinit var journeyTaskViews: Array<View>
@@ -39,6 +40,8 @@ class AddActivityFragment : Fragment(), View.OnClickListener{
     var carMakes = arrayListOf("None")
     var carModels = arrayListOf("None")
 
+    var navController: NavController? = null
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -49,6 +52,8 @@ class AddActivityFragment : Fragment(), View.OnClickListener{
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        //get nav controller to enable moving to map fragment
+        navController = Navigation.findNavController(view)
 
         //get references to items in view
         taskTypeSpinner = view.findViewById(R.id.taskTypeSpinner)
@@ -60,11 +65,12 @@ class AddActivityFragment : Fragment(), View.OnClickListener{
         carMakeSpinner = view.findViewById(R.id.carMakeSpinner)
         carModelSpinner = view.findViewById(R.id.carModelSpinner)
         addActivityButton = view.findViewById(R.id.addActivityButton)
+        mapsButton = view.findViewById(R.id.mapsButton)
 
         //create arrays of items associated with view selections
-        journeyTaskViews = arrayOf(journeyTypeTextView, journeyTypeSpinner, originTextView, destinationTextView)
-        carJourneyViews = arrayOf(carMakeSpinner, carModelSpinner)
-        bikeJourneyViews = arrayOf(isElectricSwitch)
+        journeyTaskViews = arrayOf(journeyTypeTextView, journeyTypeSpinner, mapsButton)
+        carJourneyViews = arrayOf(carMakeSpinner, carModelSpinner, originTextView, destinationTextView, mapsButton)
+        bikeJourneyViews = arrayOf(isElectricSwitch, originTextView, destinationTextView, mapsButton)
 
         //create adapter for viewing the task type spinner
         val taskTypeAdapter = ArrayAdapter.createFromResource(
@@ -97,6 +103,9 @@ class AddActivityFragment : Fragment(), View.OnClickListener{
         journeyTypeSpinner.onItemSelectedListener = JourneyTypeSpinnerListener(
             carJourneyViews, bikeJourneyViews, carMakes, carMakeAdapter, activity!!)
         carMakeSpinner.onItemSelectedListener = CarMakeSpinnerListener(carModels, carModelAdapter, activity!!)
+
+        //set listeners for our buttons
+        mapsButton.setOnClickListener(MapsButtonListener(navController!!))
         addActivityButton.setOnClickListener(this)
     }
 
