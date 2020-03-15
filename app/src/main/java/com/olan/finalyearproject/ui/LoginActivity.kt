@@ -63,7 +63,7 @@ class LoginActivity: AppCompatActivity() {
                     .addOnCompleteListener{ task ->
                         if (task.isSuccessful){
 
-                            var user = task.result!!.toObject(User::class.java)
+                            val user = task.result!!.toObject(User::class.java)
                             d("olanDebug", "retrieved user instance ${user.toString()}")
                             ((applicationContext) as UserClient).user = user
                             val intent = Intent(this, MainActivity::class.java)

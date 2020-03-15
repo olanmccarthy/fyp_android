@@ -1,8 +1,8 @@
 package com.olan.finalyearproject.models
 
 class BikeJourney(
-    override val uid: String, override val origin: Any?,
-    override val destination: Any?, val isElectric: Any?
+    override val uid: String = "", override val origin: Any? = 0.0,
+    override val destination: Any? = 0.0, val isElectric: Any? = false
 ) : JourneyTask {
 
     override val taskType = "journey"

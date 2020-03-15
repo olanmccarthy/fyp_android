@@ -34,10 +34,8 @@ import com.olan.finalyearproject.Constants.ERROR_DIALOG_REQUEST
 import com.olan.finalyearproject.Constants.PERMISSIONS_REQUEST_ACCESS_FINE_LOCATION
 import com.olan.finalyearproject.Constants.PERMISSION_REQUEST_ENABLE_GPS
 import com.olan.finalyearproject.R
-import com.olan.finalyearproject.models.BikeJourney
-import com.olan.finalyearproject.models.CarJourney
-import com.olan.finalyearproject.models.TaskClass
-import com.olan.finalyearproject.models.WalkingJourney
+import com.olan.finalyearproject.UserClient
+import com.olan.finalyearproject.models.*
 import kotlinx.android.synthetic.main.fragment_main.*
 
 /**
@@ -61,13 +59,14 @@ class MainFragment : Fragment(), View.OnClickListener {
     //boolean to check if current plan array has been loaded or not
     var currentPlanArrayLoaded = false
 
+    lateinit var user: User
+
     lateinit var addActivityButton: FloatingActionButton
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
@@ -76,6 +75,8 @@ class MainFragment : Fragment(), View.OnClickListener {
         navController = Navigation.findNavController(view)
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity!!)
 
+        user = ((activity!!.applicationContext) as UserClient).user!!
+        d("olanDebug", "userId: ${user.userId}, email: ${user.email}")
 
         if (checkMapServices()){
             if(userLocationPermissionGranted){
@@ -107,7 +108,7 @@ class MainFragment : Fragment(), View.OnClickListener {
 
         //get collection from firestore and then load the view afterwards
         if (!currentPlanArrayLoaded){
-            db.collection("users").document(mAuth.currentUser?.uid!!).collection("currentPlan").get()
+            db.collection("users").document(user.userId).collection("currentPlan").get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
                         //loop through all tasks in currentPlan collection
@@ -119,7 +120,7 @@ class MainFragment : Fragment(), View.OnClickListener {
                                     when(document.get("journeyType").toString()){
                                         "bicycling" ->{
                                             val taskItem = BikeJourney(
-                                                uid = mAuth.currentUser?.uid!!,
+                                                uid = user.userId,
                                                 destination = document.get("destination"),
                                                 origin = document.get("origin"),
                                                 isElectric = document.get("isElectric")
@@ -128,7 +129,7 @@ class MainFragment : Fragment(), View.OnClickListener {
                                         }
                                         "driving" ->{
                                             val taskItem = CarJourney(
-                                                uid = mAuth.currentUser?.uid!!,
+                                                uid = user.userId,
                                                 origin = document.get("origin"),
                                                 destination = document.get("destination"),
                                                 carMake = document.get("carMake").toString(),
@@ -140,7 +141,7 @@ class MainFragment : Fragment(), View.OnClickListener {
                                         "transit" ->{}
                                         "walking" ->{
                                             val taskItem = WalkingJourney(
-                                                uid = mAuth.currentUser?.uid!!,
+                                                uid = user.userId,
                                                 destination = document.get("destination"),
                                                 origin = document.get("origin")
                                             )

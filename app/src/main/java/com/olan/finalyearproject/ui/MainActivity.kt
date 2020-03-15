@@ -1,11 +1,6 @@
 package com.olan.finalyearproject.ui
 
-import android.app.Activity
-import android.content.DialogInterface
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.location.Location
-import android.location.LocationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log.d
@@ -14,26 +9,15 @@ import android.view.View
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.widget.Toolbar
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.startActivityForResult
-import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.NavController
-import com.google.android.gms.common.ConnectionResult
-import com.google.android.gms.common.GoogleApiAvailability
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
-import com.google.android.gms.tasks.OnCompleteListener
-import com.google.android.gms.tasks.Task
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.GeoPoint
-import com.olan.finalyearproject.Constants
 import com.olan.finalyearproject.R
+import com.olan.finalyearproject.UserClient
+import com.olan.finalyearproject.models.User
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -46,8 +30,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
     lateinit var headerView: View
-    //id of user currently logged in
-    var userId: String? = ""
+
+    lateinit var user: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,10 +46,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
-        //set userId to be id of current user
-        if (mAuth.currentUser != null){
-            userId = mAuth.currentUser?.uid
-        }
+        user = ((applicationContext) as UserClient).user!!
 
         setContentView(R.layout.activity_main)
 
@@ -76,7 +57,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navView = findViewById(R.id.nav_view)
 
         headerView = navView.getHeaderView(0)
-        headerView.findViewById<TextView>(R.id.usernameField).text = "${mAuth.currentUser?.email}"
+        headerView.findViewById<TextView>(R.id.usernameField).text = user.email
 
         val toggle = ActionBarDrawerToggle(
             this, drawerLayout, toolbar, 0, 0
