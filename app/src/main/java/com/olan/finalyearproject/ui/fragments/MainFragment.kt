@@ -188,6 +188,7 @@ class MainFragment : Fragment(), View.OnClickListener {
                     geoPoint = GeoPoint(location.latitude, location.longitude)
                 }
                 d("olanDebug", "latitude ${geoPoint.latitude}, longitude ${geoPoint.longitude}")
+                user.lastKnownLocation = geoPoint
             }
         }
 
