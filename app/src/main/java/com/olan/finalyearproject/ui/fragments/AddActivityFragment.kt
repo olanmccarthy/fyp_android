@@ -19,13 +19,13 @@ class AddActivityFragment : Fragment(), View.OnClickListener{
     lateinit var taskTypeSpinner: Spinner
     lateinit var journeyTypeTextView: TextView
     lateinit var journeyTypeSpinner: Spinner
-    lateinit var originTextView: EditText
-    lateinit var destinationTextView: EditText
     lateinit var isElectricSwitch: Switch
     lateinit var carMakeSpinner: Spinner
     lateinit var carModelSpinner: Spinner
     lateinit var addActivityButton: FloatingActionButton
-    lateinit var mapsButton: Button
+    lateinit var mapButton: Button
+    lateinit var originText: TextView
+    lateinit var destinationText: TextView
 
     //initialise lateinit arrays for collections of views
     lateinit var journeyTaskViews: Array<View>
@@ -59,18 +59,18 @@ class AddActivityFragment : Fragment(), View.OnClickListener{
         taskTypeSpinner = view.findViewById(R.id.taskTypeSpinner)
         journeyTypeSpinner = view.findViewById(R.id.journeyTypeSpinner)
         journeyTypeTextView = view.findViewById(R.id.journeyTypeTextView)
-        originTextView = view.findViewById(R.id.originText)
-        destinationTextView = view.findViewById(R.id.destinationText)
+        originText = view.findViewById(R.id.originText)
+        destinationText = view.findViewById(R.id.destinationText)
         isElectricSwitch = view.findViewById(R.id.isElectricSwitch)
         carMakeSpinner = view.findViewById(R.id.carMakeSpinner)
         carModelSpinner = view.findViewById(R.id.carModelSpinner)
         addActivityButton = view.findViewById(R.id.addActivityButton)
-        mapsButton = view.findViewById(R.id.mapsButton)
+        mapButton = view.findViewById(R.id.mapButton)
 
         //create arrays of items associated with view selections
-        journeyTaskViews = arrayOf(journeyTypeTextView, journeyTypeSpinner, mapsButton)
-        carJourneyViews = arrayOf(carMakeSpinner, carModelSpinner, originTextView, destinationTextView, mapsButton)
-        bikeJourneyViews = arrayOf(isElectricSwitch, originTextView, destinationTextView, mapsButton)
+        journeyTaskViews = arrayOf(journeyTypeTextView, journeyTypeSpinner)
+        carJourneyViews = arrayOf(carMakeSpinner, carModelSpinner, originText, destinationText, mapButton)
+        bikeJourneyViews = arrayOf(isElectricSwitch, originText, destinationText, mapButton)
 
         //create adapter for viewing the task type spinner
         val taskTypeAdapter = ArrayAdapter.createFromResource(
@@ -105,7 +105,7 @@ class AddActivityFragment : Fragment(), View.OnClickListener{
         carMakeSpinner.onItemSelectedListener = CarMakeSpinnerListener(carModels, carModelAdapter, activity!!)
 
         //set listeners for our buttons
-        mapsButton.setOnClickListener(MapsButtonListener(navController!!))
+        mapButton.setOnClickListener(MapsButtonListener(navController!!))
         addActivityButton.setOnClickListener(this)
     }
 
@@ -119,20 +119,20 @@ class AddActivityFragment : Fragment(), View.OnClickListener{
                 when(journeyTypeSpinner.selectedItem.toString()){
                     "Bike Journey" ->{
                         if(
-                            originTextView.text.toString().trim().isNotEmpty() && destinationTextView.text.toString().trim().isNotEmpty()
+                            originText.text.toString().trim().isNotEmpty() && destinationText.text.toString().trim().isNotEmpty()
                         ){
-                            d("olanDebug", "bike journey - origin: ${originTextView.text} destination: ${destinationTextView.text} isElectric: ${isElectricSwitch.showText}")
+                            d("olanDebug", "bike journey - origin: ${originText.text} destination: ${destinationText.text} isElectric: ${isElectricSwitch.showText}")
                         } else {
                             d("olanDebug", "bike journey - origin or destination are blank")
                         }
                     }
                     "Car Journey" ->{
                         if (
-                            originTextView.text.toString().trim().isNotEmpty() && destinationTextView.text.toString().trim().isNotEmpty() &&
+                            originText.text.toString().trim().isNotEmpty() && destinationText.text.toString().trim().isNotEmpty() &&
                                     carMakeSpinner.selectedItem.toString() != "None" && carModelSpinner.selectedItem.toString() != "None"
 
                         ){
-                            d("olanDebug", "car journey - origin: ${originTextView.text} destination: ${destinationTextView.text} carMake: ${carMakeSpinner.selectedItem} carModel: ${carModelSpinner.selectedItem}")
+                            d("olanDebug", "car journey - origin: ${originText.text} destination: ${destinationText.text} carMake: ${carMakeSpinner.selectedItem} carModel: ${carModelSpinner.selectedItem}")
                         } else {
                             d("olanDebug", "car journey - all conditions not met")
                         }

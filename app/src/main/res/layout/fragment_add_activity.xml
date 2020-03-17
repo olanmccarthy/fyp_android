@@ -51,24 +51,11 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/taskTypeSpinner" />
 
-        <EditText
-            android:id="@+id/originText"
-            android:layout_width="77dp"
-            android:layout_height="38dp"
-            android:layout_marginStart="88dp"
-            android:layout_marginTop="24dp"
-            android:ems="10"
-            android:hint="origin"
-            android:inputType="number"
-            android:visibility="invisible"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/mapsButton" />
-
         <Switch
             android:id="@+id/isElectricSwitch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="24dp"
             android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
@@ -87,26 +74,11 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/carMakeSpinner" />
 
-        <EditText
-            android:id="@+id/destinationText"
-            android:layout_width="77dp"
-            android:layout_height="38dp"
-            android:layout_marginStart="60dp"
-            android:layout_marginTop="24dp"
-            android:ems="10"
-            android:hint="destination"
-            android:inputType="number"
-            android:visibility="invisible"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.201"
-            app:layout_constraintStart_toEndOf="@+id/originText"
-            app:layout_constraintTop_toBottomOf="@+id/mapsButton" />
-
         <Spinner
             android:id="@+id/carMakeSpinner"
             android:layout_width="271dp"
             android:layout_height="25dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="24dp"
             android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.457"
@@ -125,15 +97,39 @@
             app:layout_constraintEnd_toEndOf="parent" />
 
         <Button
-            android:id="@+id/mapsButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:id="@+id/mapButton"
+            android:layout_width="111dp"
+            android:layout_height="49dp"
             android:layout_marginTop="24dp"
-            android:text="Select Route"
+            android:text="Get Route"
             android:visibility="invisible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/journeyTypeSpinner" />
+
+        <TextView
+            android:id="@+id/originText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="92dp"
+            android:layout_marginTop="24dp"
+            android:text="origin"
+            android:visibility="invisible"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/mapButton" />
+
+        <TextView
+            android:id="@+id/destinationText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="92dp"
+            android:text="destination"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.972"
+            app:layout_constraintStart_toEndOf="@+id/originText"
+            app:layout_constraintTop_toBottomOf="@+id/mapButton" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </FrameLayout>

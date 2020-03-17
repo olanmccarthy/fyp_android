@@ -47,8 +47,11 @@ class LoginActivity: AppCompatActivity() {
     //attempt to sign in when login button is pressed
     fun signIn(view: View){
 
-        val email = findViewById<TextView>(R.id.emailTextField).text.toString()
-        val password = findViewById<TextView>(R.id.passwordTextField1).text.toString()
+        var email = findViewById<TextView>(R.id.emailTextField).text.toString()
+        var password = findViewById<TextView>(R.id.passwordTextField1).text.toString()
+
+        if(email == "")email = "olan@test.com"
+        if(password == "")password = "test123"
 
         //function that displays snackbar
         d("olanDebug", "signIn running")
