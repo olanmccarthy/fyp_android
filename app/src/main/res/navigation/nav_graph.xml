@@ -13,10 +13,36 @@
         <action
             android:id="@+id/action_mainFragment_to_addActivityFragment"
             app:destination="@id/addActivityFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_previousPlansFragment"
+            app:destination="@id/previousPlansFragment" />
     </fragment>
     <fragment
         android:id="@+id/addActivityFragment"
         android:name="com.olan.finalyearproject.ui.fragments.AddActivityFragment"
         android:label="fragment_add_activity"
-        tools:layout="@layout/fragment_add_activity" />
+        tools:layout="@layout/fragment_add_activity" >
+        <action
+            android:id="@+id/action_addActivityFragment_to_mapFragment"
+            app:destination="@id/mapFragment" />
+        <action
+            android:id="@+id/action_addActivityFragment_to_mainFragment"
+            app:destination="@id/mainFragment"
+            app:popUpTo="@+id/mainFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/previousPlansFragment"
+        android:name="com.olan.finalyearproject.ui.fragments.PreviousPlansFragment"
+        android:label="PreviousPlansFragment"
+        tools:layout="@layout/fragment_previous_plans"
+    />
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.olan.finalyearproject.ui.fragments.MapFragment"
+        android:label="MapFragment" >
+        <action
+            android:id="@+id/action_mapFragment_to_addActivityFragment"
+            app:destination="@id/addActivityFragment"
+            app:popUpToInclusive="true" />
+    </fragment>
 </navigation>

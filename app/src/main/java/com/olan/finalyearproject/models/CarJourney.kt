@@ -2,7 +2,7 @@ package com.olan.finalyearproject.models
 
 class CarJourney(
     override val uid: String, override val origin: Any?, override val destination: Any?,
-    val carMake: String, val carModel: String, val passengers: Int = 0
+    val carMake: String, val carModel: String, val passengers: Int = 1
 ): JourneyTask {
 
     override val taskType = "journey"

@@ -16,6 +16,8 @@ import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.olan.finalyearproject.R
+import com.olan.finalyearproject.UserClient
+import com.olan.finalyearproject.models.User
 
 class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
@@ -28,8 +30,8 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var drawerLayout: DrawerLayout
     lateinit var navView: NavigationView
     lateinit var headerView: View
-    //id of user currently logged in
-    var userId: String? = ""
+
+    lateinit var user: User
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,10 +46,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
         }
 
-        //set userId to be id of current user
-        if (mAuth.currentUser != null){
-            userId = mAuth.currentUser?.uid
-        }
+        user = ((applicationContext) as UserClient).user!!
 
         setContentView(R.layout.activity_main)
 
@@ -58,7 +57,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navView = findViewById(R.id.nav_view)
 
         headerView = navView.getHeaderView(0)
-        headerView.findViewById<TextView>(R.id.usernameField).text = "${mAuth.currentUser?.email}"
+        headerView.findViewById<TextView>(R.id.usernameField).text = user.email
 
         val toggle = ActionBarDrawerToggle(
             this, drawerLayout, toolbar, 0, 0
@@ -66,6 +65,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         navView.setNavigationItemSelectedListener(this)
+        //ensure all permissions are okay for using maps and location
     }
 
     //function controlling actions taken when items in nav drawer are selected
@@ -75,10 +75,10 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
                 Toast.makeText(this, "Profile clicked", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_current_plan -> {
-                Toast.makeText(this, "Messages clicked", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Current Plan clicked", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_previous_plans -> {
-                Toast.makeText(this, "Friends clicked", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Previous Plans clicked", Toast.LENGTH_SHORT).show()
             }
             R.id.nav_update -> {
                 Toast.makeText(this, "Update clicked", Toast.LENGTH_SHORT).show()
@@ -94,4 +94,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         drawerLayout.closeDrawer(GravityCompat.START)
         return true
     }
+
+
 }

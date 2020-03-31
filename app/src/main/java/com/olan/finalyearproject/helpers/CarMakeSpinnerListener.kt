@@ -6,6 +6,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import com.google.gson.GsonBuilder
+import com.olan.finalyearproject.models.Car
 import com.squareup.okhttp.Callback
 import com.squareup.okhttp.OkHttpClient
 import com.squareup.okhttp.Request
@@ -13,7 +14,7 @@ import com.squareup.okhttp.Response
 import java.io.IOException
 
 class CarMakeSpinnerListener(
-    var carModels: ArrayList<String>, var carModelAdapter: ArrayAdapter<String>, var activity: Activity
+    var carModels: ArrayList<Car>, var carModelAdapter: CarModelArrayAdapter, var activity: Activity
 ) : AdapterView.OnItemSelectedListener {
     override fun onNothingSelected(parent: AdapterView<*>?) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -46,4 +47,4 @@ class CarMakeSpinnerListener(
     }
 }
 
-class ModelHolder(val models: List<String>)
+class ModelHolder(val models: List<Car>)
