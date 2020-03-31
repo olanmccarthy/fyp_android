@@ -1,22 +1,14 @@
 package com.olan.finalyearproject.models
 
+import com.google.android.gms.maps.model.LatLng
+
 class BikeJourney(
-    override val uid: String = "", override val origin: Any? = 0.0,
-    override val destination: Any? = 0.0, val isElectric: Any? = false
-) : JourneyTask {
-
-    override val taskType = "journey"
-    override val journeyType = "bicycle"
-
-    override val distance = calculateDistance()
-    override val carbonCost = calculateCarbonCost()
-
-    //TODO make this meaningful
-    fun calculateDistance(): Double {
-        return 3.33
-    }
-    //TODO make this meaningful
-    fun calculateCarbonCost(): Double {
-        return 4.44
-    }
-}
+    override val uid: String = "",
+    override val origin: Any? = LatLng(0.0, 0.0),
+    override val destination: Any? = LatLng(0.0, 0.0),
+    val isElectric: Any? = false,
+    override val taskType: String = "journey",
+    override val journeyType: String = "bicycle",
+    override val distance: Long = 0L,
+    override val carbonCost: Double = 0.0
+) : JourneyTask

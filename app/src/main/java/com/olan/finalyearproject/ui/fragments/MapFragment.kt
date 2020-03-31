@@ -8,6 +8,8 @@ import android.view.ViewGroup
 import android.webkit.WebStorage
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import androidx.navigation.NavController
+import androidx.navigation.Navigation
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.MapView
@@ -18,7 +20,9 @@ import com.google.android.gms.maps.model.Marker
 import com.olan.finalyearproject.R
 import com.olan.finalyearproject.Constants.MAPVIEW_BUNDLE_KEY
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.olan.finalyearproject.UserClient
+import com.olan.finalyearproject.helpers.ConfirmRouteButtonListener
 import com.olan.finalyearproject.models.User
 
 class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMapClickListener, View.OnClickListener {
@@ -31,6 +35,10 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMapClickListener,
     lateinit var originText: TextView
     lateinit var originMarker: Marker
     lateinit var destinationMarker: Marker
+    lateinit var origin: LatLng
+    lateinit var destination: LatLng
+    lateinit var confirmButton: FloatingActionButton
+    var navController: NavController? = null
 
     //boolean for storing whether user is choosing origin or destination on map
     var originTextSelected = true
@@ -42,9 +50,10 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMapClickListener,
     ): View? {
         val view = inflater.inflate(R.layout.fragment_map, container, false)
         mMapView = view!!.findViewById(R.id.map)
-
         originText = view.findViewById(R.id.originTextView)
         destinationText = view.findViewById(R.id.destinationTextView)
+        confirmButton = view.findViewById(R.id.confirmRouteButton)
+
         originText.setOnClickListener(this)
         destinationText.setOnClickListener(this)
 
@@ -54,6 +63,13 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMapClickListener,
 
         return view
     }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        navController = Navigation.findNavController(view)
+        confirmButton.setOnClickListener(ConfirmRouteButtonListener(navController))
+    }
+
     //set the camera on the map to be zoomed in around user location
     fun setCameraView(){
         val bottomBoundary = user.lastKnownLocation.latitude - 0.1
@@ -139,12 +155,14 @@ class MapFragment: Fragment(), OnMapReadyCallback, GoogleMap.OnMapClickListener,
                originMarker.remove()
             }
             originMarker = googleMap.addMarker(MarkerOptions().position(p0!!).title("Origin"))
+            origin = p0
         } else {
             destinationText.text = "Destination: ${p0?.latitude}, ${p0?.longitude}"
             if (this::destinationMarker.isInitialized){
                 destinationMarker.remove()
             }
             destinationMarker = googleMap.addMarker(MarkerOptions().position(p0!!).title("Destination"))
+            destination = p0
         }
     }
 

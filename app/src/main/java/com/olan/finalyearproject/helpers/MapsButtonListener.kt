@@ -1,12 +1,14 @@
 package com.olan.finalyearproject.helpers
 
 import android.view.View
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.NavController
 import com.olan.finalyearproject.R
 
-class MapsButtonListener(val navController: NavController): View.OnClickListener {
+class MapsButtonListener(var formLayout: ConstraintLayout, var mapLayout: ConstraintLayout): View.OnClickListener {
 
     override fun onClick(v: View?) {
-        navController.navigate(R.id.action_addActivityFragment_to_mapFragment)
+        mapLayout.visibility = View.VISIBLE
+        formLayout.visibility = View.GONE
     }
 }

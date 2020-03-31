@@ -20,7 +20,7 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/addActivityButton"
+            android:id="@+id/confirmRouteButton"
             android:layout_width="65dp"
             android:layout_height="62dp"
             android:layout_marginEnd="44dp"

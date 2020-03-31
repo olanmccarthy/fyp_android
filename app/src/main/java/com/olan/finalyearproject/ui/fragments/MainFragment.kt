@@ -67,11 +67,13 @@ class MainFragment : Fragment(), View.OnClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        d("olanDebug", "main fragment onCreateView called")
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        d("olanDebug", "main fragment onViewCreated called")
         navController = Navigation.findNavController(view)
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity!!)
 
@@ -87,14 +89,24 @@ class MainFragment : Fragment(), View.OnClickListener {
             }
         }
 
-        view.findViewById<FloatingActionButton>(R.id.addActivityButton).setOnClickListener(this)
+        view.findViewById<FloatingActionButton>(R.id.confirmRouteButton).setOnClickListener(this)
+    }
+
+    override fun onStart() {
+        super.onStart()
+        d("olanDebug", "main fragment onStart called")
+    }
+
+    override fun onResume() {
+        super.onResume()
+        d("olanDebug", "main fragment onResume called")
     }
 
     override fun onClick(v: View?) {
         //case for what id is pressed
         when(v!!.id){
             //navigate to the add activity fragment
-            R.id.addActivityButton -> navController!!.navigate(R.id.action_mainFragment_to_addActivityFragment)
+            R.id.confirmRouteButton -> navController!!.navigate(R.id.action_mainFragment_to_addActivityFragment)
         }
     }
 
@@ -102,7 +114,7 @@ class MainFragment : Fragment(), View.OnClickListener {
     @SuppressLint("RestrictedApi")
     fun getCurrentPlan(){
         //display add activity button
-        addActivityButton = view!!.findViewById(R.id.addActivityButton)
+        addActivityButton = view!!.findViewById(R.id.confirmRouteButton)
         //make add activity button visible
         addActivityButton.visibility = View.VISIBLE
 
@@ -115,10 +127,10 @@ class MainFragment : Fragment(), View.OnClickListener {
                         for (document in task.result!!) {
                             //case for different types of task types
                             when(document.get("taskType").toString()){
-                                "JourneyTask" ->{
+                                "journeyTask" ->{
                                     //case for different journey types
                                     when(document.get("journeyType").toString()){
-                                        "bicycling" ->{
+                                        "bikeJourney" ->{
                                             val taskItem = BikeJourney(
                                                 uid = user.userId,
                                                 destination = document.get("destination"),
@@ -127,7 +139,7 @@ class MainFragment : Fragment(), View.OnClickListener {
                                             )
                                             currentPlanArray.add(taskItem)
                                         }
-                                        "driving" ->{
+                                        "carJourney" ->{
                                             val taskItem = CarJourney(
                                                 uid = user.userId,
                                                 origin = document.get("origin"),
@@ -137,9 +149,9 @@ class MainFragment : Fragment(), View.OnClickListener {
                                             )
                                             currentPlanArray.add(taskItem)
                                         }
-                                        "combination" ->{}
-                                        "transit" ->{}
-                                        "walking" ->{
+                                        "combinationJourney" ->{}
+                                        "transitJourney" ->{}
+                                        "walkingJourney" ->{
                                             val taskItem = WalkingJourney(
                                                 uid = user.userId,
                                                 destination = document.get("destination"),
