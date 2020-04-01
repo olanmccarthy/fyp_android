@@ -10,18 +10,18 @@ import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
 import android.util.Log.d
+import android.view.*
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.view.GestureDetectorCompat
 import androidx.navigation.NavController
 import androidx.navigation.Navigation
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.gms.common.ConnectionResult
 import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.FusedLocationProviderClient
@@ -90,16 +90,19 @@ class MainFragment : Fragment(), View.OnClickListener {
         }
 
         view.findViewById<FloatingActionButton>(R.id.confirmRouteButton).setOnClickListener(this)
+
+        val recyclerView = view.findViewById<RecyclerView>(R.id.recylerView)
+        var mDetector = GestureDetectorCompat(activity, gestureDetector())
+        recyclerView.setOnTouchListener{ v, event ->
+            mDetector.onTouchEvent(event)
+        }
     }
 
-    override fun onStart() {
-        super.onStart()
-        d("olanDebug", "main fragment onStart called")
-    }
+    override fun onStop() {
+        currentPlanArrayLoaded = false
+        super.onStop()
+        d("olanDebug", "main fragment onStop called")
 
-    override fun onResume() {
-        super.onResume()
-        d("olanDebug", "main fragment onResume called")
     }
 
     override fun onClick(v: View?) {
@@ -113,6 +116,7 @@ class MainFragment : Fragment(), View.OnClickListener {
 
     @SuppressLint("RestrictedApi")
     fun getCurrentPlan(){
+        d("olanDebug", "getCurrentPlan running")
         //display add activity button
         addActivityButton = view!!.findViewById(R.id.confirmRouteButton)
         //make add activity button visible
@@ -120,6 +124,7 @@ class MainFragment : Fragment(), View.OnClickListener {
 
         //get collection from firestore and then load the view afterwards
         if (!currentPlanArrayLoaded){
+            currentPlanArray = ArrayList<TaskClass>()
             db.collection("users").document(user.userId).collection("currentPlan").get()
                 .addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -208,16 +213,16 @@ class MainFragment : Fragment(), View.OnClickListener {
 
     //check if google services are available and if not try to resolve issue
     fun isServicesOk(): Boolean {
-        Log.d("olanDebug", "checking if services okay")
+        d("olanDebug", "checking if services okay")
         val available = GoogleApiAvailability.getInstance().isGooglePlayServicesAvailable(activity)
 
         when {
             available == ConnectionResult.SUCCESS -> {
-                Log.d("olanDebug", "google play sevices working")
+                d("olanDebug", "google play sevices working")
                 return true
             }
             GoogleApiAvailability.getInstance().isUserResolvableError(available) -> {
-                Log.d("olanDebug", "fixable error found in services")
+                d("olanDebug", "fixable error found in services")
                 val dialog = GoogleApiAvailability.getInstance().getErrorDialog(activity, available, ERROR_DIALOG_REQUEST)
                 dialog.show()
             }
@@ -229,7 +234,7 @@ class MainFragment : Fragment(), View.OnClickListener {
     //check if gps is enabled
     fun isGPSEnabled(): Boolean {
         val manager = activity!!.getSystemService(AppCompatActivity.LOCATION_SERVICE) as LocationManager?
-        Log.d("olanDebug", "isGPSEnabled running")
+        d("olanDebug", "isGPSEnabled running")
         //TODO test if not enabling GPS breaks this forced unwrap
         if (!manager!!.isProviderEnabled(LocationManager.GPS_PROVIDER)){
             Log.d("olanDebug", "no GPS")
@@ -255,7 +260,7 @@ class MainFragment : Fragment(), View.OnClickListener {
     //logic to handle what happens after user is finished with location settings
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        Log.d("olanDebug", "onActivityResult running")
+        d("olanDebug", "onActivityResult running")
         when (requestCode){
             PERMISSION_REQUEST_ENABLE_GPS -> {
                 if(userLocationPermissionGranted){
@@ -303,6 +308,48 @@ class MainFragment : Fragment(), View.OnClickListener {
         override fun onClick(dialog: DialogInterface?, which: Int) {
             val enableGPSIntent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
             startActivityForResult(enableGPSIntent, PERMISSION_REQUEST_ENABLE_GPS )
+        }
+    }
+
+    inner class gestureDetector: GestureDetector.OnGestureListener {
+        override fun onShowPress(e: MotionEvent?) {
+            d("olanDebug", "gesture: onShowPress")
+        }
+
+        override fun onSingleTapUp(e: MotionEvent?): Boolean {
+            d("olanDebug", "gesture: onSingleTapUp")
+            return true
+        }
+
+        override fun onDown(e: MotionEvent?): Boolean {
+            d("olanDebug", "gesture: onDown")
+            return true
+        }
+
+        override fun onFling(
+            e1: MotionEvent?,
+            e2: MotionEvent?,
+            velocityX: Float,
+            velocityY: Float
+        ): Boolean {
+            d("olanDebug", "gesture: onFling")
+            currentPlanArrayLoaded = false
+            getCurrentPlan()
+            return true
+        }
+
+        override fun onScroll(
+            e1: MotionEvent?,
+            e2: MotionEvent?,
+            distanceX: Float,
+            distanceY: Float
+        ): Boolean {
+            d("olanDebug", "gesture: onScroll")
+            return true
+        }
+
+        override fun onLongPress(e: MotionEvent?) {
+            d("olanDebug", "gesture: onLongPress")
         }
     }
 

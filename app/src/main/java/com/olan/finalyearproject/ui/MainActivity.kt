@@ -62,7 +62,7 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         val toggle = ActionBarDrawerToggle(
             this, drawerLayout, toolbar, 0, 0
         )
-        drawerLayout.addDrawerListener(toggle)
+        //drawerLayout.addDrawerListener(toggle)
         toggle.syncState()
         navView.setNavigationItemSelectedListener(this)
         //ensure all permissions are okay for using maps and location
