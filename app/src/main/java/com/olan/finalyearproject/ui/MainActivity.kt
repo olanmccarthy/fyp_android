@@ -14,7 +14,6 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import com.olan.finalyearproject.R
 import com.olan.finalyearproject.UserClient
 import com.olan.finalyearproject.models.User
@@ -23,7 +22,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
 
     //firebase & firestore instances
     var mAuth = FirebaseAuth.getInstance()
-    val db = FirebaseFirestore.getInstance()
 
     //variables for nav drawer
     lateinit var toolbar: Toolbar
@@ -57,7 +55,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         navView = findViewById(R.id.nav_view)
 
         headerView = navView.getHeaderView(0)
-        headerView.findViewById<TextView>(R.id.usernameField).text = user.email
+        if(user.email != null){
+            headerView.findViewById<TextView>(R.id.usernameField).text = user.email
+        }
 
         val toggle = ActionBarDrawerToggle(
             this, drawerLayout, toolbar, 0, 0

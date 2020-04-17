@@ -27,7 +27,6 @@ import com.google.android.gms.common.GoogleApiAvailability
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.GeoPoint
 import com.olan.finalyearproject.Constants.ERROR_DIALOG_REQUEST
@@ -37,6 +36,7 @@ import com.olan.finalyearproject.R
 import com.olan.finalyearproject.UserClient
 import com.olan.finalyearproject.models.*
 import kotlinx.android.synthetic.main.fragment_main.*
+import java.lang.NullPointerException
 
 /**
  * A simple [Fragment] subclass.
@@ -46,7 +46,6 @@ class MainFragment : Fragment(), View.OnClickListener {
     var navController: NavController? = null
 
     //firebase & firestore instances
-    var mAuth = FirebaseAuth.getInstance()
     val db = FirebaseFirestore.getInstance()
 
     //instantiate object for getting devices last known location
@@ -67,18 +66,21 @@ class MainFragment : Fragment(), View.OnClickListener {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        d("olanDebug", "main fragment onCreateView called")
         return inflater.inflate(R.layout.fragment_main, container, false)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        d("olanDebug", "main fragment onViewCreated called")
         navController = Navigation.findNavController(view)
-        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity!!)
+        if(activity != null){
+            try{
+                mFusedLocationClient = LocationServices.getFusedLocationProviderClient(activity!!)
+            } catch (e: NullPointerException){
+                d("olanDebug", "Activity is null $e")
+            }
+        }
 
         user = ((activity!!.applicationContext) as UserClient).user!!
-        d("olanDebug", "userId: ${user.userId}, email: ${user.email}")
 
         if (checkMapServices()){
             if(userLocationPermissionGranted){
@@ -92,7 +94,7 @@ class MainFragment : Fragment(), View.OnClickListener {
         view.findViewById<FloatingActionButton>(R.id.confirmRouteButton).setOnClickListener(this)
 
         val recyclerView = view.findViewById<RecyclerView>(R.id.recylerView)
-        var mDetector = GestureDetectorCompat(activity, gestureDetector())
+        val mDetector = GestureDetectorCompat(activity, gestureDetector())
         recyclerView.setOnTouchListener{ v, event ->
             mDetector.onTouchEvent(event)
         }
@@ -101,22 +103,35 @@ class MainFragment : Fragment(), View.OnClickListener {
     override fun onStop() {
         currentPlanArrayLoaded = false
         super.onStop()
-        d("olanDebug", "main fragment onStop called")
-
     }
 
     override fun onClick(v: View?) {
         //case for what id is pressed
-        when(v!!.id){
-            //navigate to the add activity fragment
-            R.id.confirmRouteButton -> navController!!.navigate(R.id.action_mainFragment_to_addActivityFragment)
+        if(v != null){
+            when(v.id){
+                //navigate to the add activity fragment
+                R.id.confirmRouteButton -> {
+                    if(navController != null){
+                        try{
+                            navController!!.navigate(R.id.action_mainFragment_to_addActivityFragment)
+                        } catch (e: NullPointerException){
+                            d("olanDebug", "cannot navigate to add activity fragment, nav controller is null")
+                        }
+                    } else{
+                        d("olanDebug", "cannot navigate to add activity fragment, nav controller is null")
+                    }
+                }
+            }
+        } else{
+            d("olanDebug", "View is Null on clicking confirmRouteButton")
         }
+
     }
 
 
     @SuppressLint("RestrictedApi")
     fun getCurrentPlan(){
-        d("olanDebug", "getCurrentPlan running")
+
         //display add activity button
         addActivityButton = view!!.findViewById(R.id.confirmRouteButton)
         //make add activity button visible
@@ -137,46 +152,68 @@ class MainFragment : Fragment(), View.OnClickListener {
                                     when(document.get("journeyType").toString()){
                                         "bikeJourney" ->{
                                             val taskItem = BikeJourney(
-                                                uid = user.userId,
+                                                userId = user.userId,
+                                                taskId = document.get("taskId") as String,
                                                 destination = document.get("destination"),
                                                 origin = document.get("origin"),
                                                 isElectric = document.get("isElectric")
                                             )
                                             currentPlanArray.add(taskItem)
+                                            if(taskItem.origin is String){
+                                                d("olanDebug", "retrieved origin as string")
+                                            }
                                         }
                                         "carJourney" ->{
                                             val taskItem = CarJourney(
-                                                uid = user.userId,
+                                                userId = user.userId,
+                                                taskId = document.get("taskId") as String,
                                                 origin = document.get("origin"),
                                                 destination = document.get("destination"),
                                                 carMake = document.get("carMake").toString(),
-                                                carModel = document.get("carModel").toString()
+                                                carModel = document.get("carModel").toString(),
+                                                carId = document.get("carId").toString().toInt(),
+                                                distance = document.getLong("distance")
                                             )
                                             currentPlanArray.add(taskItem)
+                                            if(taskItem.origin is String){
+                                                d("olanDebug", "retrieved origin as string")
+                                            }
                                         }
                                         "combinationJourney" ->{}
                                         "transitJourney" ->{}
                                         "walkingJourney" ->{
                                             val taskItem = WalkingJourney(
-                                                uid = user.userId,
+                                                userId = user.userId,
+                                                taskId = document.get("taskId") as String,
                                                 destination = document.get("destination"),
                                                 origin = document.get("origin")
                                             )
                                             currentPlanArray.add(taskItem)
+                                            if(taskItem.origin is String){
+                                                d("olanDebug", "retrieved origin as string")
+                                            }
                                         }
                                     }
                                 }
                                 //TODO add handlers for different types of tasks when created
                             }
                         }
+                        user.curentPlan = currentPlanArray
                         currentPlanArrayLoaded = true
                     } else {
                         Log.d("olanDebug", "could not get currentPlan from firestore")
                     }
                     //apply the recycler view once database has been retrieved
-                    recylerView.apply {
-                        layoutManager = LinearLayoutManager(activity)
-                        adapter = TaskAdapter(currentPlanArray)
+                    d("olanDebug", "****** applying currentPlanArray $currentPlanArray to activity")
+                    if(activity != null){
+                        try{
+                            recylerView.apply {
+                                layoutManager = LinearLayoutManager(activity)
+                                adapter = TaskAdapter(currentPlanArray, activity!!)
+                            }
+                        } catch (e: NullPointerException){
+                            d("olanDebug", "null pointer on activity")
+                        }
                     }
                 }
         }
@@ -194,21 +231,21 @@ class MainFragment : Fragment(), View.OnClickListener {
     }
 
     fun getLastKnownLocation(){
-        d("olanDebug", "last known location called")
-
-        mFusedLocationClient.lastLocation.addOnCompleteListener {task ->
-            if (task.isSuccessful) {
-                d("olanDebug", "task is successful ${task}")
-                val location = task.result
-                var geoPoint = GeoPoint(0.0, 0.0)
-                if (location != null){
-                    geoPoint = GeoPoint(location.latitude, location.longitude)
+        //get the last known location of the device
+        try{
+            mFusedLocationClient.lastLocation.addOnCompleteListener {task ->
+                if (task.isSuccessful) {
+                    val location = task.result
+                    var geoPoint = GeoPoint(0.0, 0.0)
+                    if (location != null){
+                        geoPoint = GeoPoint(location.latitude, location.longitude)
+                    }
+                    user.lastKnownLocation = geoPoint
                 }
-                d("olanDebug", "latitude ${geoPoint.latitude}, longitude ${geoPoint.longitude}")
-                user.lastKnownLocation = geoPoint
             }
+        } catch (e: NullPointerException){
+            d("olanDebug", "ERROR: $e")
         }
-
     }
 
     //check if google services are available and if not try to resolve issue
@@ -303,6 +340,10 @@ class MainFragment : Fragment(), View.OnClickListener {
         }
     }
 
+    public fun deleteTask(pos: Int){
+
+    }
+
     //listener class that will start the user settings activity to enable GPS
     inner class DialogOnClickListener(): DialogInterface.OnClickListener {
         override fun onClick(dialog: DialogInterface?, which: Int) {
@@ -313,16 +354,16 @@ class MainFragment : Fragment(), View.OnClickListener {
 
     inner class gestureDetector: GestureDetector.OnGestureListener {
         override fun onShowPress(e: MotionEvent?) {
-            d("olanDebug", "gesture: onShowPress")
+            //d("olanDebug", "gesture: onShowPress")
         }
 
         override fun onSingleTapUp(e: MotionEvent?): Boolean {
-            d("olanDebug", "gesture: onSingleTapUp")
+            //d("olanDebug", "gesture: onSingleTapUp")
             return true
         }
 
         override fun onDown(e: MotionEvent?): Boolean {
-            d("olanDebug", "gesture: onDown")
+            //d("olanDebug", "gesture: onDown")
             return true
         }
 
@@ -332,7 +373,7 @@ class MainFragment : Fragment(), View.OnClickListener {
             velocityX: Float,
             velocityY: Float
         ): Boolean {
-            d("olanDebug", "gesture: onFling")
+            //d("olanDebug", "gesture: onFling")
             currentPlanArrayLoaded = false
             getCurrentPlan()
             return true
@@ -344,12 +385,12 @@ class MainFragment : Fragment(), View.OnClickListener {
             distanceX: Float,
             distanceY: Float
         ): Boolean {
-            d("olanDebug", "gesture: onScroll")
+           // d("olanDebug", "gesture: onScroll")
             return true
         }
 
         override fun onLongPress(e: MotionEvent?) {
-            d("olanDebug", "gesture: onLongPress")
+            //d("olanDebug", "gesture: onLongPress")
         }
     }
 

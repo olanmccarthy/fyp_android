@@ -15,6 +15,7 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.olan.finalyearproject.R
 import com.olan.finalyearproject.UserClient
 import com.olan.finalyearproject.models.User
+import java.lang.NullPointerException
 
 
 //TODO have way to check if user is already signed in / previously signed in
@@ -59,24 +60,29 @@ class LoginActivity: AppCompatActivity() {
         d("olanDebug", "email is $email and password is $password")
 
         mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(this, OnCompleteListener<AuthResult> { task ->
-            if (task.isSuccessful){
-                //set the userClient singleton to be user
-                val userId = task.result!!.user!!.uid
-                db.collection("users").document(userId).get()
-                    .addOnCompleteListener{ task ->
-                        if (task.isSuccessful){
+            if (task.isSuccessful && task.result != null && task.result!!.user != null){
+                try{
+                    //set the userClient singleton to be user
+                    val userId = task.result!!.user!!.uid
+                    db.collection("users").document(userId).get()
+                        .addOnCompleteListener{ task ->
+                            if (task.isSuccessful){
 
-                            val user = task.result!!.toObject(User::class.java)
-                            d("olanDebug", "retrieved user instance ${user.toString()}")
-                            ((applicationContext) as UserClient).user = user
-                            val intent = Intent(this, MainActivity::class.java)
-                            //intent.putExtra("id", mAuth.currentUser?.email)
-                            startActivity(intent)
-                            finish() //this prevents user from going back
-                        } else {
-                            showMessage(view, "Error: ${task.exception?.message}")
+                                val user = task.result!!.toObject(User::class.java)
+                                d("olanDebug", "retrieved user instance ${user.toString()}")
+                                ((applicationContext) as UserClient).user = user
+                                val intent = Intent(this, MainActivity::class.java)
+                                //intent.putExtra("id", mAuth.currentUser?.email)
+                                startActivity(intent)
+                                finish() //this prevents user from going back
+                            } else {
+                                showMessage(view, "Error: ${task.exception?.message}")
+                            }
                         }
-                    }
+                } catch (e: NullPointerException){
+                    showMessage(view, "Error $e")
+                }
+
 
             } else {
                 showMessage(view, "Error: ${task.exception?.message}")

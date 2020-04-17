@@ -1,7 +1,6 @@
 package com.olan.finalyearproject.ui.fragments
 
 import android.os.Bundle
-import android.provider.MediaStore
 import android.util.Log.d
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -35,6 +34,9 @@ import com.olan.finalyearproject.models.CarJourney
 import com.olan.finalyearproject.models.User
 import com.squareup.okhttp.*
 import java.io.IOException
+import java.lang.NullPointerException
+import java.util.*
+import kotlin.collections.ArrayList
 
 class AddActivityFragment : Fragment(), View.OnClickListener, OnMapReadyCallback, GoogleMap.OnMapClickListener {
 
@@ -72,7 +74,7 @@ class AddActivityFragment : Fragment(), View.OnClickListener, OnMapReadyCallback
     lateinit var destination: LatLng
     var duration: Long? = null //duration of journey in seconds
     var distance: Long? = null //distance of journey in metres
-    public var selectedCarId: Int? = null
+    var selectedCarId: Int? = null
 
     //boolean for storing whether user is choosing origin or destination on map
     var originTextSelected = true
@@ -153,116 +155,106 @@ class AddActivityFragment : Fragment(), View.OnClickListener, OnMapReadyCallback
     //functionality for add activity button being pressed and when destination and origin text blocks are clicked
     //easier to make the fragment itself the listener as there are a lot of different variables at work depending on selection
     override fun onClick(v: View?) {
-        when(v!!.id){
-            R.id.addActivityButton -> {
-                d("olanDebug", "addActivityButton clicked")
-                //what type of task is being created
-                when(taskTypeSpinner.selectedItem.toString()){
-                    "JourneyTask" ->{
-                        //any journey task needs origin and destination
-                        if (::origin.isInitialized && ::destination.isInitialized){
-                            var json = "{}"
-                            //what type of journey is being created
-                            when(journeyTypeSpinner.selectedItem.toString()){
-                                "Bike Journey" ->{
-                                    d("olanDebug", "bike journey - origin: $origin destination: $destination isElectric: ${isElectricSwitch.isChecked}")
-                                    val item = BikeJourney(
-                                        uid = "test",
-                                        origin = origin,
-                                        destination = destination,
-                                        isElectric = isElectricSwitch.isChecked,
-                                        distance = distance!!
-                                    )
-                                    //save bike item, go to main fragment, make rest api call to calculate carbon cost of task
-                                    //update ui when cost is calculated & store on firebase
-                                    json =
-                                        """{
-                                            |"userId":"${user.userId}",
-                                            |"taskType":"journeyTask",
-                                            |"journeyType":"bikeJourney",
-                                            |"taskId":"${item.uid}",
-                                            |"origin":"$origin",
-                                            |"destination":"$destination",
-                                            |"distance":"$distance",
-                                            |"isElectric":"${item.isElectric}"
-                                        |}""".trimMargin()
-                                }
-                                "Car Journey" ->{
-                                    if ( carMakeSpinner.selectedItem.toString() != "None" && carModelSpinner.selectedItem.toString() != "None"){
-                                        d("olanDebug", "car journey - origin: $origin destination: $destination carMake: ${carMakeSpinner.selectedItem} carModel: ${carModelSpinner.selectedItem}")
-                                        val item = CarJourney(
-                                            uid = "0",
+        if(v != null){
+            when(v.id){
+                R.id.addActivityButton -> {
+
+                    //what type of task is being created
+                    when(taskTypeSpinner.selectedItem.toString()){
+                        "JourneyTask" ->{
+                            //any journey task needs origin and destination
+                            if (::origin.isInitialized && ::destination.isInitialized){
+                                var json = "{}"
+                                //what type of journey is being created
+                                when(journeyTypeSpinner.selectedItem.toString()){
+                                    "Bike Journey" ->{
+                                        val item = BikeJourney(
+                                            userId = user.userId,
+                                            taskId = UUID.randomUUID().toString(),
                                             origin = origin,
                                             destination = destination,
-                                            carMake = carMakeSpinner.selectedItem.toString(),
-                                            carModel = carModelSpinner.selectedItem.toString()
+                                            isElectric = isElectricSwitch.isChecked,
+                                            distance = distance!!
                                         )
-
-                                        json = """{
-                                            |"userId":"${user.userId}",
-                                            |"taskId":"0",
-                                            |"taskType":"journeyTask",
-                                            |"journeyType":"carJourney",
-                                            |"origin":"$origin",
-                                            |"destination":"$destination",
-                                            |"distance":"$distance",
-                                            |"carMake":"${item.carMake}",
-                                            |"carModel":"${item.carModel}",
-                                            |"passengers":"${item.passengers}",
-                                            |"carId":"$selectedCarId"
-                                        }""".trimMargin()
-                                    } else {
-                                        d("olanDebug", "car journey - all conditions not met")
+                                        //save bike item, go to main fragment, make rest api call to calculate carbon cost of task
+                                        //update ui when cost is calculated & store on firebase
+                                        json = item.toJson()
                                     }
-                                }
-                                "Transit Journey" ->{
+                                    "Car Journey" ->{
+                                        if ( carMakeSpinner.selectedItem.toString() != "None" && carModelSpinner.selectedItem.toString() != "None"){
+                                            val item = CarJourney(
+                                                userId = user.userId,
+                                                taskId = UUID.randomUUID().toString(),
+                                                origin = origin,
+                                                destination = destination,
+                                                carMake = carMakeSpinner.selectedItem.toString(),
+                                                carModel = carModelSpinner.selectedItem.toString(),
+                                                distance = distance,
+                                                carId = selectedCarId
+                                            )
+
+                                            json = item.toJson()
+                                        } else {
+                                            d("olanDebug", "car journey - all conditions not met")
+                                        }
+                                    }
+                                    "Transit Journey" ->{
+
+                                    }
+                                    "Walking Journey" ->{
+
+                                    }
 
                                 }
-                                "Walking Journey" ->{
+                                val JSON = MediaType.parse("application/json; charset=utf-8")
+                                val client = OkHttpClient()
+                                val request = Request.Builder()
+                                    .url("http://leela.netsoc.co:5001/carbonCost")
+                                    .post(RequestBody.create(JSON, json))
+                                    .build()
+                                d("olanDebug", "making call")
+                                client.newCall(request).enqueue(object: Callback {
+                                    override fun onFailure(request: Request?, e: IOException?) {
+                                        d("olanDebug", "something went wrong with restapi call")
+                                    }
 
-                                }
+                                    override fun onResponse(response: Response?) {
+                                        val body = response?.body()?.string()
+                                        if(navController != null){
+                                            try {
+                                                navController!!.navigate(R.id.action_addActivityFragment_to_mainFragment)
+                                            } catch (e: NullPointerException){
+                                                d("olanDebug", "Error navigating to main fragment $e")
+                                            }
 
+                                        } else {
+                                            d("olanDebug", "NavController is null, cannot go to Main Fragment")
+                                        }
+
+                                    }
+
+                                })
+                            } else { //origin or destination not initialised
+                                d("olanDebug", "JourneyTask needs origin and destination to be in place")
                             }
-                            val JSON = MediaType.parse("application/json; charset=utf-8")
-                            val client = OkHttpClient()
-                            val request = Request.Builder()
-                                .url("http://leela.netsoc.co:5001/carbonCost")
-                                .post(RequestBody.create(JSON, json))
-                                .build()
-                            client.newCall(request).enqueue(object: Callback {
-                                override fun onFailure(request: Request?, e: IOException?) {
-                                    d("olanDebug", "something went wrong with restapi call")
-                                }
-
-                                override fun onResponse(response: Response?) {
-                                    val body = response?.body()?.string()
-                                    d("olanDebug", "received response from restapi $body")
-                                    navController!!.navigate(R.id.action_addActivityFragment_to_mainFragment)
-                                }
-
-                            })
-                        } else { //origin or destination not initialised
-                            d("olanDebug", "JourneyTask needs origin and destination to be in place")
                         }
+                        //TODO add handling for other task types
                     }
-                    //TODO add handling for other task types
                 }
-            }
-            R.id.destinationTextView -> { //choosing destination on map view
-                d("olanDebug", "destination clicked")
-                originTextSelected = false
-                originTextMap.setBackgroundColor(resources.getColor(R.color.textBoxNotSelected))
-                destinationTextMap.setBackgroundColor(resources.getColor(R.color.textBoxSelected))
-            }
-            R.id.originTextView -> { //choosing origin on map view
-                d("olanDebug", "origin clicked")
-                originTextSelected = true
-                originTextMap.setBackgroundColor(resources.getColor(R.color.textBoxSelected))
-                destinationTextMap.setBackgroundColor(resources.getColor(R.color.textBoxNotSelected))
-            }
-            R.id.confirmRouteButton -> { //destination and origin have been chosen, remove map view
-                mapLayout.visibility = View.GONE
-                formLayout.visibility = View.VISIBLE
+                R.id.destinationTextView -> { //choosing destination on map view
+                    originTextSelected = false
+                    originTextMap.setBackgroundColor(resources.getColor(R.color.textBoxNotSelected))
+                    destinationTextMap.setBackgroundColor(resources.getColor(R.color.textBoxSelected))
+                }
+                R.id.originTextView -> { //choosing origin on map view
+                    originTextSelected = true
+                    originTextMap.setBackgroundColor(resources.getColor(R.color.textBoxSelected))
+                    destinationTextMap.setBackgroundColor(resources.getColor(R.color.textBoxNotSelected))
+                }
+                R.id.confirmRouteButton -> { //destination and origin have been chosen, remove map view
+                    mapLayout.visibility = View.GONE
+                    formLayout.visibility = View.VISIBLE
+                }
             }
         }
 
@@ -270,23 +262,32 @@ class AddActivityFragment : Fragment(), View.OnClickListener, OnMapReadyCallback
 
     //handle map being clicked
     override fun onMapClick(p0: LatLng?) {
-        d("olanDebug", "mapClicked with latitude: ${p0?.latitude} and longitude ${p0?.longitude}")
         if(originTextSelected){
             originTextMap.text = "Origin: ${p0?.latitude}, ${p0?.longitude}"
             originText.text = "${p0?.latitude}, ${p0?.longitude}"
             if (this::originMarker.isInitialized){
                 originMarker.remove()
             }
-            originMarker = googleMap.addMarker(MarkerOptions().position(p0!!).title("Origin"))
-            origin = p0
+            if(p0 != null){
+                originMarker = googleMap.addMarker(MarkerOptions().position(p0).title("Origin"))
+                origin = p0
+            } else {
+                d("olanDebug", "p0 is null")
+            }
+
         } else {
             destinationTextMap.text = "Destination: ${p0?.latitude}, ${p0?.longitude}"
             destinationText.text = "${p0?.latitude}, ${p0?.longitude}"
             if (this::destinationMarker.isInitialized){
                 destinationMarker.remove()
             }
-            destinationMarker = googleMap.addMarker(MarkerOptions().position(p0!!).title("Destination"))
-            destination = p0
+            if(p0 != null){
+                destinationMarker = googleMap.addMarker(MarkerOptions().position(p0).title("Destination"))
+                destination = p0
+            } else {
+                d("olanDebug", "p0 is null")
+            }
+
         }
         calculateDirections()
     }
@@ -357,37 +358,67 @@ class AddActivityFragment : Fragment(), View.OnClickListener, OnMapReadyCallback
     //load values into spinners, create adapters, set listeners etc
     fun loadSpinners(view: View){
         //create adapter for viewing the task type spinner
-        val taskTypeAdapter = ArrayAdapter.createFromResource(
-            activity!!, R.array.TaskTypes, android.R.layout.simple_spinner_dropdown_item
-        )
-        taskTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        taskTypeSpinner.adapter = taskTypeAdapter
+        if(activity != null){
 
+            try{
+                val taskTypeAdapter = ArrayAdapter.createFromResource(
+                    activity!!, R.array.TaskTypes, android.R.layout.simple_spinner_dropdown_item
+                )
+                taskTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                taskTypeSpinner.adapter = taskTypeAdapter
+                taskTypeSpinner.onItemSelectedListener = TaskTypeSpinnerListener(journeyTaskViews)
+            } catch(e: NullPointerException){
+                d("olanDebug", "Activity is null $e")
+            }
 
-        val journeyTypeAdapter = ArrayAdapter.createFromResource(
-            activity!!, R.array.JourneyTypes, android.R.layout.simple_spinner_dropdown_item
-        )
-        journeyTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        journeyTypeSpinner.adapter = journeyTypeAdapter
+            try{
+                val journeyTypeAdapter = ArrayAdapter.createFromResource(
+                    activity!!, R.array.JourneyTypes, android.R.layout.simple_spinner_dropdown_item
+                )
+                journeyTypeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                journeyTypeSpinner.adapter = journeyTypeAdapter
+            } catch(e: NullPointerException){
+                d("olanDebug", "Activity is null $e")
+            }
 
-        carMakeAdapter = ArrayAdapter(
-            activity!!, android.R.layout.simple_spinner_dropdown_item, carMakes
-        )
-        carMakeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        carMakeSpinner.adapter = carMakeAdapter
+            try{
+                carMakeAdapter = ArrayAdapter(
+                    activity!!, android.R.layout.simple_spinner_dropdown_item, carMakes
+                )
+                carMakeAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                carMakeSpinner.adapter = carMakeAdapter
+            } catch(e: NullPointerException){
+                d("olanDebug", "Activity is null $e")
+            }
 
-        carModelAdapter  = CarModelArrayAdapter(
-            activity!!, android.R.layout.simple_spinner_dropdown_item, carModels
-        )
-        carModelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        carModelSpinner.adapter = carModelAdapter
+            try{
+                carModelAdapter  = CarModelArrayAdapter(
+                    activity!!, android.R.layout.simple_spinner_dropdown_item, carModels
+                )
+                carModelAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                carModelSpinner.adapter = carModelAdapter
+                carModelSpinner.onItemSelectedListener = CarModelSpinnerListener(carModels)
+            } catch(e: NullPointerException){
+                d("olanDebug", "Activity is null $e")
+            }
+
+            try{
+                journeyTypeSpinner.onItemSelectedListener = JourneyTypeSpinnerListener(
+                    carJourneyViews, bikeJourneyViews, carMakes, carMakeAdapter, activity!!)
+            } catch(e: NullPointerException){
+                d("olanDebug", "Activity is null $e")
+            }
+
+            try{
+                carMakeSpinner.onItemSelectedListener = CarMakeSpinnerListener(carModels, carModelAdapter, activity!!)
+            } catch(e: NullPointerException){
+                d("olanDebug", "Activity is null $e")
+            }
+        } else {
+            d("olanDebug", "Could not load spinners, adapters because Activity is null")
+        }
 
         //set the listeners for various views
-        taskTypeSpinner.onItemSelectedListener = TaskTypeSpinnerListener(journeyTaskViews)
-        journeyTypeSpinner.onItemSelectedListener = JourneyTypeSpinnerListener(
-            carJourneyViews, bikeJourneyViews, carMakes, carMakeAdapter, activity!!)
-        carMakeSpinner.onItemSelectedListener = CarMakeSpinnerListener(carModels, carModelAdapter, activity!!)
-        carModelSpinner.onItemSelectedListener = CarModelSpinnerListener(carModels)
         mapButton.setOnClickListener(MapsButtonListener(formLayout, mapLayout))
         addActivityButton.setOnClickListener(this)
         confirmButton.setOnClickListener(this)
